@@ -1,16 +1,21 @@
-#As-Rigid-As-Possible (ARAP) Mesh Deformation — From Scratch
+# 🧩 As-Rigid-As-Possible (ARAP) Mesh Deformation — From Scratch
 
-A clean and minimal implementation of the ARAP deformation model
-(as introduced by Sorkine & Alexa, 2007).
+A clean and minimal implementation of the **ARAP deformation model**  
+(as introduced by *Sorkine & Alexa, 2007*).
 
-✨ Features
+---
 
-Local step (SVD-based rotation estimation)
+## ✨ Features
 
-Global step (Poisson system solver)
+- 🔧 **Local Step** — SVD-based rotation estimation for each cell  
+- 🔁 **Global Step** — Solve the Poisson linear system for vertex updates  
+- 🎯 **Handle Constraints** — Arbitrary vertex positions can be fixed  
+- 🔺 **Triangular Mesh Support** — Works on general triangle meshes  
+- 🐍 **Pure Python Implementation** — Using NumPy + SciPy
 
-Vertex handle constraints
+---
 
-Works on general triangular meshes
+## 📦 Installation
 
-Pure Python / NumPy / SciPy implementatio
+```bash
+pip install -r requirements.txt
