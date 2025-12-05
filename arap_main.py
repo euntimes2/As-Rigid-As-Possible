@@ -1,7 +1,7 @@
 
 from data_ply import load_ply
 from util import compute_b, setup_constrained_system, build_one_ring_neighbors, compute_cotangent_weights, build_laplacian
-from visualization import create_mesh, pick_handles, ask_handle_translation, visualize_deformation
+from visualization import pick_handles, ask_handle_translation, visualize_deformation
 
 import scipy.sparse.linalg as spla
 import numpy as np
@@ -162,7 +162,7 @@ def main():
     # 4. 사용자 constraint 정의 (예: vertex 0, 10, 200 을 고정)
     # 5. L : Factoization pre calculate with edge weight matrix
     # -> input 에 의해서 L matrix 에서 fix 된 대응되는 row 가 소거됨
-    free_idx , fixed_idx, L_UF, solve_L = setup_constrained_system(L, fixed_idx, num_verts)
+    free_idx , fixed_idx, L_UF, solve_L = setup_constrained_system(L, handle_idx, num_verts)
     
     p_deformed = verts.copy()
     p_deformed[fixed_idx] = fixed_positions
@@ -177,7 +177,6 @@ def main():
         # Global step: (constraint-aware)
         p_new = arap_global_step_constrained(
             verts=verts,
-            neighbors=neighbors,
             w_ij=edge_weights,
             R=R,
             free_idx=free_idx,
