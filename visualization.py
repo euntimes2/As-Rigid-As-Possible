@@ -1,8 +1,10 @@
 # visualization.py
 
+from pathlib import Path
+
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import plotly.graph_objects as go
+import plotly.io as pio
 
 
 def pick_handles(verts, faces):
@@ -49,40 +51,47 @@ def ask_handle_translation():
             print("파싱 실패. 다시 입력해줘. (예: 0 0.2 0)")
 
 
-def visualize_deformation(verts, faces, p_deformed):
+def visualize_deformation(verts, faces, p_deformed, html_path="arap_deformation.html", open_browser=True):
     """
-    matplotlib 의 3D plot 으로 변형된 mesh 를 시각화.
-    원본/변형 둘 다 보고 싶으면 subplot 두 개로 그려도 되고,
-    여기서는 변형 mesh만 그려줄게.
+    Plotly 기반의 3D 웹 뷰어로 변형된 mesh 를 시각화한다.
+
+    - 리눅스/WSL 에서도 HTML 파일을 브라우저로 열 수 있도록
+      ``html_path`` 로 저장한다.
+    - ``open_browser`` 가 True 이면 plotly 가 기본 브라우저를 자동으로 띄운다.
+
+    Args:
+        verts: (N, 3) 원래 vertex 위치 (현재 함수에서는 범위 계산용)
+        faces: (F, 3) 삼각형 face index 배열
+        p_deformed: (N, 3) 변형된 vertex 위치
+        html_path: 저장할 HTML 파일 경로 (기본: ``arap_deformation.html``)
+        open_browser: True 인 경우 저장 후 브라우저 자동 오픈
     """
-    fig = plt.figure(figsize=(8, 8))
-    ax = fig.add_subplot(111, projection="3d")
 
-    # faces: (F, 3) int, p_deformed: (N, 3)
-    tris = p_deformed[faces]  # (F, 3, 3)
+    x, y, z = p_deformed.T
+    i, j, k = faces.T
 
-    mesh_collection = Poly3DCollection(tris, alpha=0.8)
-    mesh_collection.set_edgecolor("k")
-    ax.add_collection3d(mesh_collection)
+    mesh = go.Mesh3d(
+        x=x,
+        y=y,
+        z=z,
+        i=i,
+        j=j,
+        k=k,
+        color="lightblue",
+        opacity=0.85,
+        flatshading=True,
+        showscale=False,
+        lighting=dict(ambient=0.5, diffuse=0.7, roughness=0.7, specular=0.25),
+        lightposition=dict(x=0.5, y=0.5, z=1.0),
+    )
 
-    # 축 스케일 맞추기
-    all_pts = p_deformed
-    x_min, y_min, z_min = all_pts.min(axis=0)
-    x_max, y_max, z_max = all_pts.max(axis=0)
-    max_range = max(x_max - x_min, y_max - y_min, z_max - z_min)
+    fig = go.Figure(mesh)
+    fig.update_layout(
+        title="ARAP Deformed Mesh (Plotly)",
+        scene=dict(aspectmode="data"),
+        margin=dict(l=0, r=0, t=40, b=0),
+    )
 
-    x_mid = 0.5 * (x_max + x_min)
-    y_mid = 0.5 * (y_max + y_min)
-    z_mid = 0.5 * (z_max + z_min)
-
-    ax.set_xlim(x_mid - max_range / 2, x_mid + max_range / 2)
-    ax.set_ylim(y_mid - max_range / 2, y_mid + max_range / 2)
-    ax.set_zlim(z_mid - max_range / 2, z_mid + max_range / 2)
-
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
-    ax.set_title("ARAP Deformed Mesh (matplotlib)")
-
-    plt.tight_layout()
-    plt.show()
+    output_path = Path(html_path).resolve()
+    pio.write_html(fig, file=output_path, auto_open=open_browser, include_plotlyjs="cdn")
+    print(f"Plotly 시각화가 {output_path} 에 저장되었어. 브라우저에서 열어봐!")
