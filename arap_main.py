@@ -193,12 +193,10 @@ def main():
         if diff < 1e-6:
             print(f"Optimizing in step {it}, diff = {diff}")
             break
-     # 10. 결과 시각화
+    # 10. 결과 시각화
     visualize_deformation(verts, faces, p_deformed)
-  
-    
 
 
 if __name__ == "__main__":
-    
+
     main()
