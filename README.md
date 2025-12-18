@@ -21,11 +21,11 @@ A clean and minimal implementation of the **ARAP deformation model**
 pip install -r requirements.txt
 ```
 
-## 🎥 Visualization (Linux/WSL Friendly)
+## 🎥 Visualization (Open3D)
 
-The deformation result is rendered with **Plotly** so you can open it in any
-web browser—even when running the computation headlessly on Linux/WSL.
+The deformation result is rendered with **Open3D** in a native window
+(requires a local GUI environment).
 
 1. Run `python arap_main.py` to perform the deformation.
-2. The script saves an interactive HTML file (default: `arap_deformation.html`).
-3. Open the HTML in your browser to inspect and rotate the mesh interactively.
+2. An Open3D window opens for handle selection (Shift+LMB drag to box-select, C to clear, Q/Esc to finish).
+3. Another Open3D window shows the deformed mesh.
